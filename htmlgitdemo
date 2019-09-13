@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+    <title>JQury Demo</title>
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+     
+    
+<style>
+ table,td {
+        border: 1px solid #333;
+    }
+
+
+    #mydiv {
+  width: 100%;
+  padding: 50px 0;
+  text-align: center;
+  background-color: lightblue;
+  margin-top: 20px;
+}
+</style>
+   
+    </head>
+    <body>
+  <h1>DYNAMIC TABLE</h1> <br>
+  <input type="text" id="search" placeholder="live search" style="width:500px;height:30px;font-weight:300"></input> <br><br>
+  <table id="resource-table">
+     
+        <thead style="background-color :gray">
+                    
+                <th colspan="4">RESOURCE
+                <button id="add">ADD</button>
+                </th>
+
+            
+        </thead>
+            
+        <tbody>
+
+                <th>NAME</th>
+                <th>EMAIL-ID</th>
+                <th colspan="2">OPTIONS</th>
+        
+        </tbody>  
+          
+    
+          
+      
+  </table>
+
+<div id="mydiv" style="display:none">
+  <h4>ENTER RESOURCE DETAILS</h4>
+ 
+  <table ALIGN="center">
+      <tr>
+          <td>
+                Enter Name:
+          </td>
+            <td>
+                    <input type="textbox" id="name" >
+            </td>
+      </tr>
+
+      <tr>
+            <td>
+                    Enter Email-Id:
+            </td>
+              <td>
+                    <input type="email" id="mail"><br>
+              </td>
+        </tr>
+        
+        <tr>
+           <td colspan="2">
+             <button id="savebtn" >SAVE</button>
+             <button id="cancel">CANCEL</button>
+          </td>
+        </tr>
+    
+
+  </table>
+ 
+</div>
+
+
+
+<div id="mydiv" style="display:none">
+  <h4>EDIT DETAILS</h4>
+ 
+  
+                Enter Name:
+          
+                    <input type="textbox" id="editname" >
+            
+                    Enter Email-Id:
+            
+                    <input type="email" id="editmail"><br>
+              
+        
+        
+           
+             <button id="editsavebtn" >SAVE</button>
+             <button id="editcancel">CANCEL</button>
+          
+ 
+</div>
+
+
+
+<script>
+        function divfun() {
+          var x = document.getElementById("mydiv");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+
+
+        
+
+
+    $(document).ready(function(){
+        $("#savebtn").click(function(){
+            var name = $("#name").val();
+            var email = $("#mail").val();
+            var markup = "<tr data-name='"+name+"' data-email='"+email+"'><td>" + name + "</td><td>" + email + '</td> <td><button id="btn-edit">EDIT</button></td> <td><button id="delbtn">DELETE</button></td></tr>';
+            $("#resource-table tbody").append(markup);
+            $("#mydiv").hide();
+        });
+
+        $("#add").click(function(){
+            $("#mydiv").show();
+
+        });
+
+        $("#cancel").click(function(){
+            $("#mydiv").hide();
+
+        });
+
+      /*  $("#delbtn").click(function(){
+            $("table tbody").find('td').each(function(){
+            	
+                    $(this).parents("tr").remove();
+                
+            });
+        });*/
+  
+
+        $("body").on("click", "#delbtn", function(){
+        $(this).parents("tr").remove();
+   
+   
+        });
+    
+
+
+        $("body").on("click", "#btn-edit", function(){
+        var name = $(this).parents("tr").attr('data-name');
+        var email = $(this).parents("tr").attr('data-email');
+    
+        $(this).parents("tr").find("td:eq(0)").html('<input name="edit_name" value="'+name+'">');
+        $(this).parents("tr").find("td:eq(1)").html('<input name="edit_email" value="'+email+'">');
+    
+        $(this).parents("tr").find("td:eq(2)").prepend("<button id='btn-update'>Update</button><button id='btn-cancel'>Cancel</button>")
+        $(this).hide();
+    });
+        
+         
+     
+    $("body").on("click", "#btn-update", function(){
+        var name = $(this).parents("tr").find("input[name='edit_name']").val();
+        var email = $(this).parents("tr").find("input[name='edit_email']").val();
+    
+        $(this).parents("tr").find("td:eq(0)").text(name);
+        $(this).parents("tr").find("td:eq(1)").text(email);
+     
+        $(this).parents("tr").attr('data-name', name);
+        $(this).parents("tr").attr('data-email', email);
+    
+        $(this).parents("tr").find("#btn-edit").show();
+        $(this).parents("tr").find("#btn-cancel").remove();
+        $(this).parents("tr").find("#btn-update").remove();
+    });
+
+
+
+
+
+    $("body").on("click", "#btn-cancel", function(){
+        var name = $(this).parents("tr").attr('data-name');
+        var email = $(this).parents("tr").attr('data-email');
+    
+        $(this).parents("tr").find("td:eq(0)").text(name);
+        $(this).parents("tr").find("td:eq(1)").text(email);
+   
+        $(this).parents("tr").find("#btn-edit").show();
+        $(this).parents("tr").find("#btn-update").remove();
+        $(this).parents("tr").find("#btn-cancel").remove();
+    });
+
+
+
+
+
+    $("#search").on("keyup", function() {
+    var value = $(this).val();
+
+    $("#resource-table tr").each(function(index) {
+        if (index !== 0) {
+
+            $row = $(this);
+
+            var id = $row.find("td:first").text();
+
+            if (id.indexOf(value) !== 0) {
+                $row.hide();
+            }
+            else {
+                $row.show();
+            }
+        }
+    });
+ });
+
+
+});
+
+
+
+       
+  /*$("#form1").validate({
+   rules: {
+     name: "required"
+   },
+   messages: {
+     name: "Please specify your name"
+
+      }
+  });
+
+  $("#form1").validate({
+   rules: {
+     mail: "required"
+   },
+   messages: {
+     mail: "Please specify your name"
+
+      }
+  });
+   
+
+  $('#savebtn').on('click', function() {
+    $("#form1").valid();
+});*/
+
+
+
+        </script>
+    </body>
+</html>
